@@ -4,10 +4,13 @@
 #include <memory>
 #include "InputMapping.h"
 #include "Controller.h"
+#include "Math.h"
 
 class GameActor;
 class PixelSpriteComponent;
+class CollisionComponent;
 class Controller;
+class MoveComponent;
 
 struct GameParams {
 	int worldWidth;
@@ -28,12 +31,19 @@ public:
 	void AddDrawComponent(PixelSpriteComponent* drawComp);
 	void RemoveDrawComponent(PixelSpriteComponent* drawComp);
 
+	void AddCollisionComponent(CollisionComponent* collComp);
+	void RemoveCollisionComponent(CollisionComponent* collComp);
+
 	void AddController(std::unique_ptr<Controller> controller);
+
+	bool ResolveCollisionsFor(CollisionComponent* collComp, MoveComponent* moveComp, Math::Vec2DF& velocity, Math::Vec2DF& newPos) const;
 
 private:
 	std::vector<GameActor*> m_Actors;
 
 	std::vector<PixelSpriteComponent*> m_DrawComponents;
+
+	std::vector<CollisionComponent*> m_Collisions;
 
 	std::vector<std::unique_ptr<Controller>> m_Controllers;
 };

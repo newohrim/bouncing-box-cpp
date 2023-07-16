@@ -6,6 +6,9 @@
 #include "MoveComponent.h"
 #include "PlayerController.h"
 #include "PlatformMoveComponent.h"
+#include "CollisionComponent.h"
+
+#include <iostream>
 
 void GameLevel::Init(const GameParams& params)
 {
@@ -13,16 +16,28 @@ void GameLevel::Init(const GameParams& params)
 		GameActor* testPlatform = new GameActor(this);
 		PixelSpriteComponent* spriteComp = new PixelSpriteComponent(testPlatform, 300, 100);
 		spriteComp->SetDrawColor(ColorRGBA{0, 255, 0, 255});
+		CollisionComponent* platformColl = new CollisionComponent(testPlatform, 300, 100);
 		//MoveComponent* moveComp = new PlatformMoveComponent(testPlatform, Math::Vec2DF{300.0f, 500.0f}, Math::Vec2DF{ 700.0f, 500.0f });
 		//moveComp->SetMoveSpeed(300.0f);
 		testPlatform->SetPosition(Math::Vec2DF{ (float)params.worldWidth, (float)params.worldHeight + 400 } *0.5f);
+	}
+
+	{
+		GameActor* testPlatform = new GameActor(this);
+		PixelSpriteComponent* spriteComp = new PixelSpriteComponent(testPlatform, 300, 100);
+		spriteComp->SetDrawColor(ColorRGBA{ 0, 255, 0, 255 });
+		CollisionComponent* platformColl = new CollisionComponent(testPlatform, 300, 100);
+		//MoveComponent* moveComp = new PlatformMoveComponent(testPlatform, Math::Vec2DF{300.0f, 500.0f}, Math::Vec2DF{ 700.0f, 500.0f });
+		//moveComp->SetMoveSpeed(300.0f);
+		testPlatform->SetPosition(Math::Vec2DF{ 150, 700 });
 	}
 
 	{	// PLAYER
 		GameActor* testActor = new GameActor(this);
 		PixelSpriteComponent* spriteComp = new PixelSpriteComponent(testActor, 50, 50);
 		spriteComp->SetDrawColor(ColorRGBA{ 0, 255, 255, 255 });
-		MoveComponent* moveComp = new MoveComponent(testActor);
+		CollisionComponent* playerCollision = new CollisionComponent(testActor, 50, 50);
+		MoveComponent* moveComp = new MoveComponent(testActor, playerCollision);
 		moveComp->SetMoveSpeed(250.0f);
 		AddController(std::unique_ptr<Controller>(new PlayerController(moveComp)));
 		testActor->SetPosition(Math::Vec2DF{ (float)params.worldWidth, (float)params.worldHeight } *0.5f);
@@ -87,7 +102,42 @@ void GameLevel::RemoveDrawComponent(PixelSpriteComponent* drawComp)
 	m_DrawComponents.erase(iter);
 }
 
+void GameLevel::AddCollisionComponent(CollisionComponent* collComp)
+{
+	assert(std::find(m_Collisions.begin(), m_Collisions.end(), collComp) == m_Collisions.end());
+	m_Collisions.push_back(collComp);
+}
+
+void GameLevel::RemoveCollisionComponent(CollisionComponent* collComp)
+{
+	const auto iter = std::find(m_Collisions.begin(), m_Collisions.end(), collComp);
+	assert(iter != m_Collisions.end());
+	m_Collisions.erase(iter);
+}
+
 void GameLevel::AddController(std::unique_ptr<Controller> controller)
 {
 	m_Controllers.push_back(std::move(controller));
+}
+
+bool GameLevel::ResolveCollisionsFor(CollisionComponent* collComp, MoveComponent* moveComp, Math::Vec2DF& velocity, Math::Vec2DF& newPos) const
+{
+	bool collided = false;
+	for (CollisionComponent* other : m_Collisions) {
+		if (other == collComp || !collComp->DoCollide(other)) {
+			continue;
+		}
+
+		if (collComp->DoCollideHorizontally(other)) {
+			collComp->ResolveHorizontally(other, velocity, newPos);
+			moveComp->GetOwner()->SetPosition(newPos);
+			if (collComp->DoCollideHorizontally(other)) {
+				collComp->ResolveVertically(other, velocity, newPos);
+			}
+		}
+		
+		collided = true;
+	}
+
+	return collided;
 }
