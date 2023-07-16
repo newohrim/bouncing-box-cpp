@@ -14,6 +14,11 @@ void PlatformMoveComponent::Update(float deltaTime)
 	MovePlatform(deltaTime);
 }
 
+void PlatformMoveComponent::MoveOwner(Math::Vec2DFN dir, float deltaTime)
+{
+	GetOwner()->SetPosition(GetOwner()->GetPosition() + dir * GetMoveSpeed() * deltaTime);
+}
+
 void PlatformMoveComponent::MovePlatform(float deltaTime)
 {
 	const Math::Vec2DF actorPos = GetOwner()->GetPosition();

@@ -9,6 +9,8 @@ public:
 
 	virtual void Update(float deltaTime) override;
 
+	virtual void MoveOwner(Math::Vec2DFN dir, float deltaTime) override;
+
 protected:
 	void MovePlatform(float deltaTime);
 

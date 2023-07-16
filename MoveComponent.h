@@ -12,7 +12,7 @@ public:
 
 	virtual void Update(float deltaTime) override;
 
-	void MoveOwner(Math::Vec2DFN direction, float deltaTime);
+	virtual void MoveOwner(Math::Vec2DFN direction, float deltaTime);
 
 	float GetMoveSpeed() const { return m_MoveSpeed; }
 	void SetMoveSpeed(float moveSpeed) { m_MoveSpeed = moveSpeed; }

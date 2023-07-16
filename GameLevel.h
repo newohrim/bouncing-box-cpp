@@ -22,7 +22,7 @@ class GameLevel
 public:
 	void Init(const GameParams& params);
 	void ProceedInput(InputState inputState, float deltaTime);
-	void Update(float deltaTime);
+	bool Update(float deltaTime);
 	void Draw(uint32_t* buffer, int bufferWidth, int bufferHeight);
 
 	void AddGameActor(GameActor* gameActor);
@@ -38,6 +38,10 @@ public:
 
 	bool ResolveCollisionsFor(CollisionComponent* collComp, MoveComponent* moveComp, Math::Vec2DF& velocity, Math::Vec2DF& newPos) const;
 
+	void ScheduleFinishGame();
+
+	GameActor* GetPlayer() const { return m_Player; }
+
 private:
 	std::vector<GameActor*> m_Actors;
 
@@ -46,5 +50,9 @@ private:
 	std::vector<CollisionComponent*> m_Collisions;
 
 	std::vector<std::unique_ptr<Controller>> m_Controllers;
+
+	GameActor* m_Player = nullptr;
+
+	bool m_IsFinishScheduled = false;
 };
 

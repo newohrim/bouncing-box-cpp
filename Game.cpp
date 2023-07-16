@@ -46,7 +46,11 @@ void act(float dt)
         state |= is_key_pressed(VK_DOWN) ? InputState::KEY_DOWN : InputState::NONE;
         gameLvl->ProceedInput(state, dt);
     }
-    gameLvl->Update(dt);
+    if (!gameLvl->Update(dt)) {
+        // reload level?
+        finalize();
+        initialize();
+    }
 }
 
 // fill buffer in this function

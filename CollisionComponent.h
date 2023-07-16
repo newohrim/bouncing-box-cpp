@@ -6,7 +6,7 @@
 class CollisionComponent : public Component
 {
 public:
-	CollisionComponent(GameActor* actor, int width, int height);
+	CollisionComponent(GameActor* actor, int width, int height, bool isSolid = true);
 	~CollisionComponent();
 
 	bool DoCollide(CollisionComponent* other) { return CollideAABBvsAABB(this, other); }
@@ -16,6 +16,10 @@ public:
 	void ResolveHorizontally(CollisionComponent* other, Math::Vec2DF velocity, Math::Vec2DF& newPos) const;
 	void ResolveVertically(CollisionComponent* other, Math::Vec2DF velocity, Math::Vec2DF& newPos) const;
 
+	bool IsSolid() const { return m_IsSolid; }
+
+	virtual void OnCollisionHandle(CollisionComponent* from) {}
+
 protected:
 	static bool CollideAABBvsAABB(CollisionComponent* compA, CollisionComponent* compB);
 	static bool CollideAABBvsAABB_Horizontally(CollisionComponent* compA, CollisionComponent* compB);
@@ -24,5 +28,7 @@ protected:
 private:
 	int m_Width;
 	int m_Height;
+
+	bool m_IsSolid;
 };
 

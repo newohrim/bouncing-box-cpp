@@ -14,6 +14,16 @@ static float MoveFunctionY(float t, float force = 1000.0f, float angle = 0.8f, f
 	return force * angle * t - gravity * t * t * 0.5f;
 }
 
+static float GetTimeAfterTopCollision(float t, float force = 1000.0f, float angle = 0.8f, float gravity = 1000.0f) 
+{
+	// force * angle - gravity * t == 0 // t = force * angle / gravity
+	const float midT = force * angle / gravity;
+	if (t >= midT) {
+		return t;
+	}
+	return 2.0f * midT - t;
+}
+
 void MoveComponent::Update(float deltaTime)
 {
 	using namespace Math;
@@ -46,8 +56,13 @@ void MoveComponent::Update(float deltaTime)
 		actor->SetPosition(newPos);
 		m_Velocity = newPos - oldPos;
 		const Vec2DF newPosBeforeResolution = newPos;
-		if (actor->GetLevel()->ResolveCollisionsFor(m_AttachedCollision, this, m_Velocity, newPos) && newPos.y != newPosBeforeResolution.y) {
-			m_SinceLastHit = 0.0f;
+		bool shouldChangeDir = false;
+		if (actor->GetLevel()->ResolveCollisionsFor(m_AttachedCollision, this, m_Velocity, newPos)) {
+			if (newPos.y < newPosBeforeResolution.y) {
+				m_SinceLastHit = 0.0f;
+			} else if (newPos.y > newPosBeforeResolution.y) {
+				m_SinceLastHit = GetTimeAfterTopCollision(m_SinceLastHit);
+			}
 		}
 	}
 	actor->SetPosition(newPos);
