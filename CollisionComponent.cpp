@@ -14,12 +14,12 @@ CollisionComponent::CollisionComponent(GameActor* actor, int width, int height, 
 	  m_Height(height),
 	  m_IsSolid(isSolid)
 {
-	actor->GetLevel()->AddCollisionComponent(this);
+	actor->GetLevel()->AddEntity(this);
 }
 
 CollisionComponent::~CollisionComponent()
 {
-	GetOwner()->GetLevel()->RemoveCollisionComponent(this);
+	GetOwner()->GetLevel()->RemoveEntity(this);
 }
 
 void CollisionComponent::ResolveHorizontally(CollisionComponent* other, Vec2DF velocity, Vec2DF& newPos) const

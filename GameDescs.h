@@ -6,10 +6,11 @@
 #include "PixelSpriteComponent.h"
 #include "CollisionComponent.h"
 #include "PlayerController.h"
+#include "DeathTriggerComponent.h"
 
 struct QuadDesc {
 	Math::Vec2DF location;
-	ColorRGBA color;
+	ColorBGRA color;
 	int width;
 	int height;
 	bool addCollision = true;
@@ -58,4 +59,13 @@ GameActor* CreatePlatform(const PlatformDesc& desc, GameLevel* gameLvl)
 	MoveComponent* moveComp = new PlatformMoveComponent(platform, desc.pointA, desc.pointB);
 	moveComp->SetMoveSpeed(desc.moveSpeed);
 	return platform;
+}
+
+GameActor* CreateDeathZone(const QuadDesc& desc, GameLevel* gameLvl) 
+{
+	QuadDesc customDesc = desc;
+	customDesc.addCollision = false;
+	GameActor* deathZone = CreateQuad(customDesc, gameLvl);
+	new DeathTriggerComponent(deathZone, desc.width, desc.height);
+	return deathZone;
 }

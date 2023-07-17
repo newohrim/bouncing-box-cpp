@@ -12,6 +12,7 @@ namespace Math {
 	static constexpr float EPSILON = std::numeric_limits<float>::epsilon() * 10;
 
 #pragma region VEC2D_INT
+	// Vector with integer components
 	struct Vec2D 
 	{
 		int x = 0;
@@ -51,6 +52,7 @@ namespace Math {
 	}
 #pragma endregion
 #pragma region VEC2D_FLOAT
+	// Vector with floating point components
 	struct Vec2DF 
 	{
 		float x = 0.0f;
@@ -85,6 +87,7 @@ namespace Math {
 	}
 #pragma endregion
 #pragma region VEC2D_FLOAT_NORMALIZED
+	// Normalized verison of Vec2DF
 	struct Vec2DFN : public Vec2DF {
 		Vec2DFN() = default;
 		Vec2DFN(float x, float y) : Vec2DF{ x, y }

@@ -20,11 +20,8 @@ public:
 private:
 	CollisionComponent* m_AttachedCollision = nullptr;
 
-	Math::Vec2DF m_Velocity;
-	Math::Vec2DF m_Acceleration;
 	Math::Vec2DF m_Forces;
 	float m_SinceLastHit = 0.0f;
 	float m_MoveSpeed = 1.0f;
-	bool m_ApplyGravity = true;
 };
 

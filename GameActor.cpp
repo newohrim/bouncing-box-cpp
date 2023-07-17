@@ -7,7 +7,7 @@
 GameActor::GameActor(GameLevel* gameLvl)
 	: m_GameLvl(gameLvl)
 {
-	gameLvl->AddGameActor(this);
+	gameLvl->AddEntity(this);
 }
 
 GameActor::~GameActor()
@@ -15,7 +15,7 @@ GameActor::~GameActor()
 	for (Component* component : m_Components) {
 		delete component;
 	}
-	m_GameLvl->RemoveGameActor(this);
+	m_GameLvl->RemoveEntity(this);
 }
 
 void GameActor::Update(float deltaTime)
@@ -37,12 +37,3 @@ void GameActor::RemoveComponent(Component* component)
 	assert(iter != m_Components.end());
 	m_Components.erase(iter);
 }
-
-//GameActor::GameActor(std::weak_ptr<GameLevel> gameLvl, std::initializer_list<ComponentPtr> components) 
-//	: m_GameLvl(gameLvl)
-//{
-//	for (ComponentPtr ptr : components) {
-//		ptr->m_Owner = this;
-//	}
-//	m_Components.insert(m_Components.begin(), components);
-//}

@@ -9,12 +9,12 @@ PixelSpriteComponent::PixelSpriteComponent(GameActor* actor, int width, int heig
 	  m_Width(width),
 	  m_Height(height)
 {
-	actor->GetLevel()->AddDrawComponent(this);
+	actor->GetLevel()->AddEntity(this);
 }
 
 PixelSpriteComponent::~PixelSpriteComponent()
 {
-	GetOwner()->GetLevel()->RemoveDrawComponent(this);
+	GetOwner()->GetLevel()->RemoveEntity(this);
 }
 
 void PixelSpriteComponent::DrawPixels(uint32_t* buffer, int bufferWidth, int bufferHeight)
@@ -24,7 +24,7 @@ void PixelSpriteComponent::DrawPixels(uint32_t* buffer, int bufferWidth, int buf
 		return;
 	}
 
-	ColorRGBA* drawBuffer = reinterpret_cast<ColorRGBA*>(buffer);
+	ColorBGRA* drawBuffer = reinterpret_cast<ColorBGRA*>(buffer);
 	const GameActor* actor = GetOwner();
 	assert(actor);
 

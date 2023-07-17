@@ -25,22 +25,25 @@ public:
 	bool Update(float deltaTime);
 	void Draw(uint32_t* buffer, int bufferWidth, int bufferHeight);
 
-	void AddGameActor(GameActor* gameActor);
-	void RemoveGameActor(GameActor* gameActor);
-
-	void AddDrawComponent(PixelSpriteComponent* drawComp);
-	void RemoveDrawComponent(PixelSpriteComponent* drawComp);
-
-	void AddCollisionComponent(CollisionComponent* collComp);
-	void RemoveCollisionComponent(CollisionComponent* collComp);
+	template<class T>
+	void AddEntity(T* entity);
+	template<class T>
+	void RemoveEntity(T* entity);
 
 	void AddController(std::unique_ptr<Controller> controller);
 
-	bool ResolveCollisionsFor(CollisionComponent* collComp, MoveComponent* moveComp, Math::Vec2DF& velocity, Math::Vec2DF& newPos) const;
+	bool ResolveCollisionsFor(CollisionComponent* collComp, MoveComponent* moveComp, Math::Vec2DF velocity, Math::Vec2DF& newPos) const;
 
+	void SchedulePlayerDeath();
 	void ScheduleFinishGame();
 
 	GameActor* GetPlayer() const { return m_Player; }
+
+protected:
+	template<class T>
+	void AddToContainer(std::vector<T*>& container, T* enitity);
+	template<class T>
+	void RemoveFromContainer(std::vector<T*>& container, T* enitity);
 
 private:
 	std::vector<GameActor*> m_Actors;
@@ -53,6 +56,7 @@ private:
 
 	GameActor* m_Player = nullptr;
 
+	bool m_IsPlayerAlive = true;
+
 	bool m_IsFinishScheduled = false;
 };
-
